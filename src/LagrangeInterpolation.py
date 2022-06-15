@@ -1,44 +1,12 @@
-import enum
-import random
-from numpy.polynomial.polynomial import Polynomial as Poly
-import numpy.polynomial.polynomial as polynomial
 from Field import Field
-class LagrangePolynomial:
-    def __init__(self, n: int, t: int, integerKey: int, p: int):        
-        self.n = n
-        self.t = t
-        self.integerKey = integerKey
-        self.p = p
-        self.field_p = Field(self.p)
 
-    def horner(self, x, poly, n):
+
+class LagrangeInterpolation:
+    def __init__(self, p, shares):    
+        self.p = p   
+        self.shares = shares
+        self.field_p = Field(p)
     
-        # Initialize result
-        result = poly[0] 
-    
-        # Evaluate value of polynomial
-        # using Horner's method
-        for i in range(1, n):    
-            result = result*x + poly[i]
-        print("horner", x, result)
-        return result
-   
-
-    def generateCoefficients(self):
-        coefficients = [random.randrange(self.p - 1) for _ in range(self.t)]
-        coefficients[0] = self.integerKey
-        print("COEFF", coefficients, self.t)
-        self.polynomial = Poly(coefficients)
-        
-
-    def generateShares(self):
-        self.generateCoefficients()
-        shares = []
-
-        for i in range(1, self.n + 1):
-            x = random.randrange(self.p - 1)
-            shares.append((x, polynomial.polyval(x, self.polynomial.coef) % self.p ))
-        return shares
 
     def createLagrangePolynomial(self, x, x_i, x_points):
         """
@@ -60,7 +28,7 @@ class LagrangePolynomial:
                 
         return self.field_p.divide(dividend, divisor) 
     
-    def reconstruct_secret(self, shares):
+    def reconstruct_secret(self):
         """
         Reconstructs the secret from a given list of shares
         Creates the base i polynomial evaluated on x = 0 for each x_i, 
@@ -78,7 +46,7 @@ class LagrangePolynomial:
         """
         res = 0
         x = 0    
-        x_points, y_points = zip(*shares)
+        x_points, y_points = zip(*self.shares)
         for i in range(len(x_points)):
             baseIPolynomial = self.createLagrangePolynomial(x, x_points[i], x_points)
             currProduct = (baseIPolynomial * y_points[i])

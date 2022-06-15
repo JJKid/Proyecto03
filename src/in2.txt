@@ -1,0 +1,15 @@
+expressionProperties: {
+        'templateOptions.label': this.translate.stream('Firstname')
+      }
+
+
+Checar la parte del servicio de ngx translate
+Ver si se puede incorporar codigo de ionic en el template del formly
+Ver la parte del drang and drop con lo de designer
+Checar el grid en formly UI
+
+
+Main.py c -h
+Main.py d -h
+
+AES-256 requires that the data to be encrypted is supplied in 16-byte blocks.

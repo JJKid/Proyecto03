@@ -4,6 +4,7 @@ import os
 import argparse
 
 from Cipher import Cipher
+from Decipher import Decipher
 
 def valid_file(path):
     root, ext = os.path.splitext(path)
@@ -39,6 +40,9 @@ def main():
     
     elif args.option == 'd':
         print(args.eval_file_in, args.encrypted_file_in)
+        decipher = Decipher(args.encrypted_file_in, args.eval_file_in )
+        decipher.decipher()
+
 
 if __name__ == "__main__":
     main()

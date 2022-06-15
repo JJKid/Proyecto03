@@ -1,7 +1,8 @@
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 from Crypto.Protocol.KDF import PBKDF2
-from LagrangePolynomial import LagrangePolynomial
+from LagrangeInterpolation import LagrangeInterpolation
+from Polynomial import Polynomial
 from getpass import getpass
 import hashlib
 import random
@@ -25,32 +26,40 @@ class Cipher:
     def cipherFile(self):
         password = getpass("Enter a password to encrypt: ")
         self.writeCipheredFile(password)
-        lagrangePolynomial = LagrangePolynomial(self.n, self.t, self.integerKey, self.p)
-        shares = lagrangePolynomial.generateShares();
+        polynomial = Polynomial(self.n, self.t, self.integerKey, self.p)
+        shares = polynomial.generateShares();
+        self.writeSharesFile(shares, self.file_out)
         print("Integer key" , self.integerKey )
-        print("Reconstructed secret:",  lagrangePolynomial.reconstruct_secret(shares))
-        print(lagrangePolynomial.reconstruct_secret(shares) == self.integerKey)
-        
+       
+    def writeSharesFile(self, shares, outputFile):
+        with open('shares.frg', 'w') as f:
+            for tuple in shares:
+                f.write(' '.join(str(s) for s in tuple) + '\n')
+        print('shrares.frg created', shares)
 
     def writeCipheredFile(self, password):
-        salt = get_random_bytes(32)
-        self.integerKey = self.hashCodeToBase16(self.getPasswordHashcode(password))
+        self.generateIntegerKey(password)
+        salt = b'\x8a\xfe\x1f\xa7aY}\xa3It=\xc3\xccT\xc8\x94\xc11%w]A\xb7\x87G\xd8\xba\x9e\xf8\xec&\xf0'
         key = PBKDF2(str(self.integerKey), salt , dkLen=32)
+        cipher = AES.new(key, AES.MODE_CFB)
         # Encrypt using the password converted into sha256 then to a number
         # Call encrypt_file using file_out provided        
         #print("Password en texto claro y su hash", password, self.getPasswordHashcode(password))        
         with open(self.file_in, 'rb') as input:
-            encryptedData = self.encryptData(key, input.read())
+            encryptedData = self.encryptData(input.read(), cipher)
             # print(encryptedData) 
 
             with open(self.file_out , 'wb') as output:
+                output.write(cipher.iv)
                 output.write(encryptedData)
         #os.remove(self.file_in)
 
-    def encryptData(self, key, data):
-        cipher = AES.new(key, AES.MODE_CFB)
+    def encryptData(self, data, cipher):        
         ciphertext = cipher.encrypt(data)
         return ciphertext
+
+    def generateIntegerKey(self, password):
+        self.integerKey = self.hashCodeToBase16(self.getPasswordHashcode(password))
 
     def getPasswordHashcode(self, password):
         hashcode = hashlib.sha256(password.encode()).digest()
