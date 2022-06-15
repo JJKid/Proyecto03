@@ -40,34 +40,36 @@ class LagrangePolynomial:
             shares.append((x, polynomial.polyval(x, self.polynomial.coef) % self.p ))
         return shares
 
-    def lagrange_polynomial(self, i, x_points, x):
+    def createLagrangePolynomial(self, x, x_i, x_points):
         """
         Reconstructs a Lagrange basis polynomial
 
         Args:
-            i (int): [x_i]
-            x_points (list): vector of x points
-            x (int): value to find
+            x_i (int): [x_i] for the polynomial P_i(x)
+            x_points (list): list of x points
+            x (int): x value to evaluate for P_i(x)
 
         Returns:
             int: A Lagrange basis polynomial
         """
-        num, dem = 1, 1 # We calculate each separately to avoid inexcat division
+        dividend, divisor = 1, 1
         for j in range(len(x_points)):
-            if x_points[j] != i:
-                num *= x - x_points[j] # X - x_j
-                dem *= (i-x_points[j]) # x_i - x_j
+            if x_points[j] != x_i:
+                dividend *= x - x_points[j] 
+                divisor *= (x_i-x_points[j])
                 
-        return self.field_p.divide(num, dem) # (X - x_j) (x_i - x_j)^-1 -> where (x_i - x_j)^-1 is the inverse multiplicative
+        return self.field_p.divide(dividend, divisor) 
     
     def reconstruct_secret(self, shares):
         """
         Reconstructs the secret from a given list of shares
+        Creates the base i polynomial evaluated on x = 0 for each x_i, 
+        multiplies it by y_i and each of this products are added into
+        res
 
         Args:
             shares (list): share to use to reconstruct the secret
-            x (int): term to find
-
+            
         Raises:
             ValueError: in case that the number of shares is not enough to reconstruct the secret
 
@@ -75,13 +77,11 @@ class LagrangePolynomial:
             int: the secret
         """
         res = 0
-        x = 0        
+        x = 0    
         x_points, y_points = zip(*shares)
         for i in range(len(x_points)):
-            poly = self.lagrange_polynomial(x_points[i], x_points, x)
-            
-            product = (poly * y_points[i]) % self.p
-            
-            res += product
+            baseIPolynomial = self.createLagrangePolynomial(x, x_points[i], x_points)
+            currProduct = (baseIPolynomial * y_points[i])
+            res += currProduct
             
         return res % self.p
