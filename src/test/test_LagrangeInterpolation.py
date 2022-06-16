@@ -10,9 +10,9 @@ class test_LagrangeInterpolation(TestCase):
 
     def test_evaluateLagrangePolynomial(self):
         x_points, _ = zip(*self.lagrangeInterpolation.shares)
-        evaluationResult = self.lagrangeInterpolation.evaluateLagrangePolynomial(random.randrange(10), random.choice(x_points), x_points)
+        evaluationResult = self.lagrangeInterpolation.createLagrangeBaseIPolynomial(random.randrange(10), random.choice(x_points), x_points)
         assert isinstance(evaluationResult, int)
 
     def test_reconstruct_secret(self):
-        assert isinstance(self.lagrangeInterpolation.reconstruct_secret(), int) 
-        assert self.lagrangeInterpolation.reconstruct_secret() < self.p
+        assert isinstance(self.lagrangeInterpolation.retrievePolynomialConstantTerm(), int) 
+        assert self.lagrangeInterpolation.retrievePolynomialConstantTerm() < self.p

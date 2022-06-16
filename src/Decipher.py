@@ -14,7 +14,6 @@ class Decipher:
     def decipher(self):
         self.readSharesFile()
         recoveredIntegerKey = self.reconstructKey()
-        print("Retrieved integer key", recoveredIntegerKey)
         salt = b'\x8a\xfe\x1f\xa7aY}\xa3It=\xc3\xccT\xc8\x94\xc11%w]A\xb7\x87G\xd8\xba\x9e\xf8\xec&\xf0'
         key = PBKDF2(str(recoveredIntegerKey), salt , dkLen=32)
         originalData = self.writeCipheredFile(key)
@@ -62,5 +61,5 @@ class Decipher:
     
     def reconstructKey(self):        
         lagrangeInterpolation = LagrangeInterpolation(self.p, self.shares)
-        return lagrangeInterpolation.reconstruct_secret()
+        return lagrangeInterpolation.retrievePolynomialConstantTerm()
        
