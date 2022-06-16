@@ -1,6 +1,5 @@
 from Field import Field
 
-
 class LagrangeInterpolation:
     def __init__(self, p, shares):    
         self.p = p   
@@ -8,7 +7,7 @@ class LagrangeInterpolation:
         self.field_p = Field(p)
     
 
-    def createLagrangePolynomial(self, x, x_i, x_points):
+    def evaluateLagrangePolynomial(self, x, x_i, x_points):
         """
         Reconstructs a Lagrange basis polynomial
 
@@ -48,7 +47,7 @@ class LagrangeInterpolation:
         x = 0    
         x_points, y_points = zip(*self.shares)
         for i in range(len(x_points)):
-            baseIPolynomial = self.createLagrangePolynomial(x, x_points[i], x_points)
+            baseIPolynomial = self.evaluateLagrangePolynomial(x, x_points[i], x_points)
             currProduct = (baseIPolynomial * y_points[i])
             res += currProduct
             
