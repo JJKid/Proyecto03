@@ -78,3 +78,4 @@ class LagrangeInterpolation:
             res += currProduct
             
         return res % self.p
+        

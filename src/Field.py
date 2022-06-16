@@ -35,3 +35,4 @@ class Field():
         """    
         multiplicativeInverse = egcd(y, self.p)[1]
         return x * multiplicativeInverse
+        

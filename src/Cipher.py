@@ -96,7 +96,7 @@ class Cipher:
         ----------
         shares : list[tuples]
             list of shares of the polynomial
-            
+
         outputFile : str 
             file name where shares will be saved
                 
@@ -132,4 +132,3 @@ class Cipher:
     def hashCodeToBase16(self, hashCode):
         secretInt = int(hashCode.hex(), base=16)
         return secretInt
-    

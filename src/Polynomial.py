@@ -77,5 +77,3 @@ class Polynomial:
             shares.append((x, self.evaluatePoint(x, self.polynomialCoefficients) % self.p ))
         return shares
     
-
-    
