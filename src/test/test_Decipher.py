@@ -12,6 +12,6 @@ class test_Decipher(TestCase):
     lagrangeInterpolation = LagrangeInterpolation(p, [(random.randrange(100), random.randrange(100)) for i in range(100)])
 
     def test_reconstructKey(self):        
-        assert isinstance(self.lagrangeInterpolation.reconstruct_secret(), int)
+        assert isinstance(self.lagrangeInterpolation.retrievePolynomialConstantTerm(), int)
 
     
