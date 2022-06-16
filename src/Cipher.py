@@ -114,21 +114,97 @@ class Cipher:
             print(outputFile + ' created')
 
     def generateCipherMechanism(self, integerKey, salt, mode):
-        key = PBKDF2(str(integerKey), salt , dkLen=32)
-        cipherMechanism = AES.new(key, mode)
-        return cipherMechanism 
+        """
+            Creates a new AES object built from an integer key and a bytes string used
+            as salt, which is used to perform the encryption operation of data
 
-    def encryptData(self, data, cipherMechanism):        
-        ciphertext = cipherMechanism.encrypt(data)
-        return ciphertext
+            Attributes
+            ----------
+            integerKey : int
+                integer key associated with the sha-256 of the original entered password 
+
+            salt : str 
+                addtional input to add to the key, to avoid that the result password could be
+                found on a rainbow table
+                https://en.wikipedia.org/wiki/Rainbow_table
+
+            mode : str
+                AES mode of encryption
+            
+            Returns
+            -------
+                An AES encrypter object 
+                
+        """
+        key = PBKDF2(str(integerKey), salt , dkLen=32)
+        return AES.new(key, mode)
+
+    def encryptData(self, data, cipherMechanism):      
+        """
+            Method that encrypts data read from a file using an AES
+            mechanism previously built
+
+            Attributes
+            ----------
+            data : bytes
+                stream of bytes read from an input file 
+
+            cipherMechanism : AES 
+                AES encrypter object
+            
+            Returns
+            -------
+                An encoded string of bytes as ciphertext
+                
+        """   
+        return cipherMechanism.encrypt(data)
 
     def generateIntegerKey(self, password):
+        """
+            Method that converts a entered password to an integer key
+
+            Attributes
+            ----------
+            password : str
+                password string entered by the user
+
+            Returns
+            -------
+                An integer associated with entered password
+                
+        """     
         return self.hashCodeToBase16(self.getPasswordHashcode(password))
 
     def getPasswordHashcode(self, password):
-        hashcode = hashlib.sha256(password.encode()).digest()
-        return hashcode
+        """
+            Method that generates a hash of the entered password
+            using sha-256
+
+            Attributes
+            ----------
+            password : str
+                password string entered by the user 
+            
+            Returns
+            -------
+                An encoded string of bytes as the sha-256 for the entered password
+                
+        """   
+        return hashlib.sha256(password.encode()).digest()
 
     def hashCodeToBase16(self, hashCode):
-        secretInt = int(hashCode.hex(), base=16)
-        return secretInt
+        """
+            Method that receives a bytes string asocciated with a 
+            password hashcode and convert it to an integer base 16
+
+            Attributes
+            ----------
+            hashCode : bytes
+                bytes string associated with a password hash
+                       
+            Returns
+            -------
+                An integer key associated with the hashCode
+                
+        """     
+        return int(hashCode.hex(), base=16)
