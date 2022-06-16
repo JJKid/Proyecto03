@@ -48,18 +48,19 @@ class Decipher:
         recoveredIntegerKey = self.reconstructKey()
         salt = b'\x8a\xfe\x1f\xa7aY}\xa3It=\xc3\xccT\xc8\x94\xc11%w]A\xb7\x87G\xd8\xba\x9e\xf8\xec&\xf0'
         key = PBKDF2(str(recoveredIntegerKey), salt , dkLen=32)
-        originalData = self.writeCipheredFile(key)
+        originalData = self.writeDecipheredFile(key)
         
         try:
             with open(self.encryptedFile[:-4], 'wb') as f:
                 f.write(originalData)
         except OSError:
-                print("Could not write file:", self.encryptedFile[:-4])
-                sys.exit()
+            print("Could not write deciphered file:", self.encryptedFile[:-4])
+            sys.exit()
         finally:
+            os.remove(self.sharesFile)
             os.remove(self.encryptedFile)
 
-    def writeCipheredFile(self, key):
+    def writeDecipheredFile(self, key):
         """
         Method that read the shares file and from this shares reconstruct
         the constant term of the associated polynomial which is the integer 
@@ -80,11 +81,10 @@ class Decipher:
                 cipher = AES.new(key, AES.MODE_CFB, iv = iv)
                 original_data = cipher.decrypt(cipheredData)
         except OSError:
-                print("Could not read file:", self.encryptedFile)
-                sys.exit()
+            print("Could not write file:", self.encryptedFile)
+            sys.exit()
         
         finally:
-            print("KEY type", type(key))
             return original_data
 
     def readSharesFile(self):
@@ -102,13 +102,9 @@ class Decipher:
             self.shares = shares
         
         except OSError:
-                print("Could not read file:", self.sharesFile)
-                sys.exit()
-        
-        finally:
-            os.remove(self.sharesFile)
-
-    
+            print("Could not read shares file:", self.sharesFile)
+            sys.exit()      
+           
     def reconstructKey(self):
         """
         Method that use a received password to encrypt the input file

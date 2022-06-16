@@ -83,7 +83,7 @@ class Cipher:
                 os.remove(self.inputFile)
 
         except OSError:
-            print("Could not open/read file:", self.inputFile)
+            print("Could not open/read input file:", self.inputFile)
             sys.exit()     
         
         
@@ -107,7 +107,7 @@ class Cipher:
                 f.write(' '.join(str(s) for s in tuple) + '\n')
             
         except OSError:
-            print("Could not open/read file:", outputFile)
+            print("Could not write shares file:", outputFile)
             sys.exit()
 
         finally:
