@@ -1,0 +1,4 @@
+pycryptodome>=3.14.1
+numpy>=1.22.4
+crypto>=1.4.1
+egcd>= 0.3.0
